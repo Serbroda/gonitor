@@ -27,9 +27,27 @@ func (args *Arguments) Get(key string) string {
 	return args.keyValues[key]
 }
 
+func (args *Arguments) GetFirst(keys ...string) string {
+	for _, k := range keys {
+		if val, ok := args.keyValues[k]; ok {
+			return val
+		}
+	}
+	return ""
+}
+
 func (args *Arguments) HasKey(key string) bool {
 	_, ok := args.keyValues[key]
 	return ok
+}
+
+func (args *Arguments) HasAnyKey(keys ...string) bool {
+	for _, k := range keys {
+		if _, ok := args.keyValues[k]; ok {
+			return true
+		}
+	}
+	return false
 }
 
 func GetArgsRaw() []string {
