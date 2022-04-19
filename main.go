@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"gonitor/common"
+)
 
 func main() {
-	fmt.Println("Hi")
+	args := common.GetArgs()
+	fmt.Printf("Args: %v\n", args)
 }
