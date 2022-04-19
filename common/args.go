@@ -27,6 +27,13 @@ func (args *Arguments) Get(key string) string {
 	return args.keyValues[key]
 }
 
+func (args *Arguments) GetRequired(key string) string {
+	if !args.HasKey(key) {
+		panic("Missing required key: " + key)
+	}
+	return args.keyValues[key]
+}
+
 func (args *Arguments) GetFirst(keys ...string) string {
 	for _, k := range keys {
 		if val, ok := args.keyValues[k]; ok {
@@ -36,6 +43,24 @@ func (args *Arguments) GetFirst(keys ...string) string {
 	return ""
 }
 
+func (args *Arguments) GetFirstDefault(def string, keys ...string) string {
+	for _, k := range keys {
+		if val, ok := args.keyValues[k]; ok {
+			return val
+		}
+	}
+	return def
+}
+
+func (args *Arguments) GetFirstRequired(keys ...string) string {
+	for _, k := range keys {
+		if val, ok := args.keyValues[k]; ok {
+			return val
+		}
+	}
+	panic("Missing any of required keys: " + strings.Join(keys, ", "))
+}
+
 func (args *Arguments) HasKey(key string) bool {
 	_, ok := args.keyValues[key]
 	return ok
@@ -43,7 +68,7 @@ func (args *Arguments) HasKey(key string) bool {
 
 func (args *Arguments) HasAnyKey(keys ...string) bool {
 	for _, k := range keys {
-		if _, ok := args.keyValues[k]; ok {
+		if args.HasKey(k) {
 			return true
 		}
 	}

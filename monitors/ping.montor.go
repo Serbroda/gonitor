@@ -1,9 +1,8 @@
 package monitors
 
 import (
-	"fmt"
-	"os/exec"
-	"strings"
+	"github.com/go-ping/ping"
+	"time"
 )
 
 type PingMonitor struct {
@@ -11,7 +10,18 @@ type PingMonitor struct {
 }
 
 func (m *PingMonitor) Monitor() bool {
-	fmt.Printf("Start pinging host '%s'\n", m.Host)
-	out, _ := exec.Command("ping", m.Host, "-c 5", "-i 3", "-w 10").Output()
-	return !strings.Contains(string(out), "Destination Host Unreachable")
+	pinger, err := ping.NewPinger(m.Host)
+	pinger.SetPrivileged(true)
+	pinger.Count = 1
+	pinger.Timeout = 5 * time.Second
+
+	if err != nil {
+		panic(err)
+	}
+	err = pinger.Run()
+	if err != nil {
+		panic(err)
+	}
+	stats := pinger.Statistics()
+	return stats.PacketsRecv > 0
 }
