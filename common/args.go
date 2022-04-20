@@ -20,7 +20,7 @@ func (args *Arguments) GetKeyValues() map[string]string {
 }
 
 func (args *Arguments) Set(key string, val string) {
-	args.keyValues[key] = val
+	args.keyValues[key] = strings.Trim(val, " ")
 }
 
 func (args *Arguments) Get(key string) string {
