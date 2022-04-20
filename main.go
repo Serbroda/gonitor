@@ -50,6 +50,15 @@ func main() {
 			fmt.Printf("%v -> ", host)
 			res = ssh.Monitor()
 			break
+		case "port":
+			host := args.GetFirstRequired("H", "host")
+			port := args.GetFirstRequired("p", "port")
+			m := monitors.PortMonitor{
+				Host: host,
+				Port: port,
+			}
+			fmt.Printf("%v:%v -> ", host, port)
+			res = m.Monitor()
 		default:
 			panic("Unkown mode: " + mode)
 		}
