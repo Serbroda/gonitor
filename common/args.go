@@ -1,6 +1,7 @@
 package common
 
 import (
+	"gonitor/utils"
 	"os"
 	"strings"
 )
@@ -24,55 +25,31 @@ func (args *Arguments) Set(key string, val string) {
 }
 
 func (args *Arguments) Get(key string) string {
-	return args.keyValues[key]
+	return utils.Get(args.keyValues, key)
 }
 
 func (args *Arguments) GetRequired(key string) string {
-	if !args.HasKey(key) {
-		panic("Missing required key: " + key)
-	}
-	return args.keyValues[key]
+	return utils.GetRequired(args.keyValues, key)
 }
 
 func (args *Arguments) GetFirst(keys ...string) string {
-	for _, k := range keys {
-		if val, ok := args.keyValues[k]; ok {
-			return val
-		}
-	}
-	return ""
+	return utils.GetFirst(args.keyValues, keys...)
 }
 
 func (args *Arguments) GetFirstDefault(def string, keys ...string) string {
-	for _, k := range keys {
-		if val, ok := args.keyValues[k]; ok {
-			return val
-		}
-	}
-	return def
+	return utils.GetFirstDefault(args.keyValues, def, keys...)
 }
 
 func (args *Arguments) GetFirstRequired(keys ...string) string {
-	for _, k := range keys {
-		if val, ok := args.keyValues[k]; ok {
-			return val
-		}
-	}
-	panic("Missing any of required keys: " + strings.Join(keys, ", "))
+	return utils.GetFirstRequired(args.keyValues, keys...)
 }
 
 func (args *Arguments) HasKey(key string) bool {
-	_, ok := args.keyValues[key]
-	return ok
+	return utils.HasKey(args.keyValues, key)
 }
 
 func (args *Arguments) HasAnyKey(keys ...string) bool {
-	for _, k := range keys {
-		if args.HasKey(k) {
-			return true
-		}
-	}
-	return false
+	return utils.HasAnyKey(args.keyValues, keys...)
 }
 
 func GetArgsRaw() []string {

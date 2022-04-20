@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gonitor/common"
 )
 
@@ -11,4 +12,8 @@ func main() {
 		common.Cli(args)
 		return
 	}
+
+	configFile := args.GetFirstDefault("test.yml", "c", "config")
+	conf := common.LoadConfig(configFile)
+	fmt.Printf("Conf: %v\n", conf)
 }

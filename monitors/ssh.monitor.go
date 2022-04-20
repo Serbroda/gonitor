@@ -15,7 +15,7 @@ type SSHMonitor struct {
 	ResultParser func(out string) bool
 }
 
-func (m *SSHMonitor) Monitor() (bool, string) {
+func (m *SSHMonitor) Monitor() (bool, any) {
 	conf := &ssh.ClientConfig{
 		User: m.User,
 		Auth: []ssh.AuthMethod{
