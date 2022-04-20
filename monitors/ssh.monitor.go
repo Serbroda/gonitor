@@ -15,7 +15,7 @@ type SSHMonitor struct {
 	ResultParser func(out string) bool
 }
 
-func (m *SSHMonitor) Monitor() bool {
+func (m *SSHMonitor) Monitor() (bool, string) {
 	conf := &ssh.ClientConfig{
 		User: m.User,
 		Auth: []ssh.AuthMethod{
@@ -44,5 +44,5 @@ func (m *SSHMonitor) Monitor() bool {
 	}
 	out := b.String()
 	fmt.Printf("%s:\n %s", m.Command, out)
-	return m.ResultParser(out)
+	return m.ResultParser(out), out
 }

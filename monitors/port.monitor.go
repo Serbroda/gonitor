@@ -11,12 +11,12 @@ type PortMonitor struct {
 	Port string
 }
 
-func (m *PortMonitor) Monitor() bool {
+func (m *PortMonitor) Monitor() (bool, any) {
 	conn, err := net.DialTimeout("tcp", net.JoinHostPort(m.Host, m.Port), 5*time.Second)
 	if err != nil {
 		fmt.Println("Connection error: ", err)
-		return false
+		return false, nil
 	}
 	defer conn.Close()
-	return conn != nil
+	return conn != nil, nil
 }

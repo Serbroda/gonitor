@@ -9,7 +9,7 @@ type PingMonitor struct {
 	Host string
 }
 
-func (m *PingMonitor) Monitor() bool {
+func (m *PingMonitor) Monitor() (bool, any) {
 	pinger, err := ping.NewPinger(m.Host)
 	pinger.SetPrivileged(true)
 	pinger.Count = 1
@@ -23,5 +23,5 @@ func (m *PingMonitor) Monitor() bool {
 		panic(err)
 	}
 	stats := pinger.Statistics()
-	return stats.PacketsRecv > 0
+	return stats.PacketsRecv > 0, nil
 }

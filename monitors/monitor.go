@@ -1,5 +1,5 @@
 package monitors
 
-type Monitor interface {
-	Monitor() bool
+type Monitor[T any] interface {
+	Monitor() (bool, T)
 }

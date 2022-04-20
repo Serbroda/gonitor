@@ -22,22 +22,24 @@ func main() {
 		switch strings.ToLower(mode) {
 		case "ping":
 			host := args.GetFirstRequired("H", "host")
-			ping := monitors.PingMonitor{Host: host}
+			m := monitors.PingMonitor{Host: host}
 			fmt.Printf("%v -> ", host)
-			res = ping.Monitor()
+			ok, _ := m.Monitor()
+			res = ok
 			break
 		case "rest":
 			url := args.GetFirstRequired("u", "url")
-			rest := monitors.RestMonitor{URL: url}
+			m := monitors.RestMonitor{URL: url}
 			fmt.Printf("%v -> ", url)
-			res = rest.Monitor()
+			ok, _ := m.Monitor()
+			res = ok
 			break
 		case "ssh":
 			host := args.GetFirstRequired("H", "host")
 			port := args.GetFirstDefault("22", "p", "port")
 			user := args.GetFirstRequired("u", "user")
 			pass := args.GetFirstRequired("P", "password", "pass")
-			ssh := monitors.SSHMonitor{
+			m := monitors.SSHMonitor{
 				Host:     host,
 				Port:     port,
 				User:     user,
@@ -48,7 +50,8 @@ func main() {
 				},
 			}
 			fmt.Printf("%v -> ", host)
-			res = ssh.Monitor()
+			ok, _ := m.Monitor()
+			res = ok
 			break
 		case "port":
 			host := args.GetFirstRequired("H", "host")
@@ -58,7 +61,9 @@ func main() {
 				Port: port,
 			}
 			fmt.Printf("%v:%v -> ", host, port)
-			res = m.Monitor()
+			ok, _ := m.Monitor()
+			res = ok
+			break
 		default:
 			panic("Unkown mode: " + mode)
 		}
