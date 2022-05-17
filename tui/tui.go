@@ -32,18 +32,18 @@ func (m model) Init() tea.Cmd {
 	go func() {
 		for {
 			time.Sleep(time.Second * 5)
-			for _, m := range m.currentNotes {
-				ok, _ := m.monitor.Handler.Check()
-				for i := len(m.res) - 1; i > 0; i-- {
-					m.res[i] = m.res[i-1]
+			for _, mon := range m.currentNotes {
+				ok, _ := mon.monitor.Handler.Check()
+				for i := len(mon.res) - 1; i > 0; i-- {
+					mon.res[i] = mon.res[i-1]
 				}
 				if ok {
-					m.res[0] = 1
+					mon.res[0] = 1
 				} else {
-					m.res[0] = 0
+					mon.res[0] = 0
 				}
+				channelOut <- m.currentNotes
 			}
-			channelOut <- m.currentNotes
 		}
 	}()
 
