@@ -7,12 +7,14 @@ import (
 	"io/ioutil"
 )
 
+type MonitorConfig struct {
+	Name       string
+	Type       monitors.MonitorType
+	Properties map[string]string
+}
+
 type Config struct {
-	Monitors []struct {
-		Name       string
-		Type       monitors.MonitorType
-		Properties map[string]string
-	}
+	Monitors []MonitorConfig
 }
 
 func LoadConfig(file string) Config {

@@ -1,0 +1,10 @@
+monitors:
+  - name: test1
+    type: ping
+    properties:
+      host: 192.168.178.101
+
+  - name: test2
+    type: ping
+    properties:
+      host: 192.168.178.101

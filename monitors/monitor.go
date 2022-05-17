@@ -19,13 +19,13 @@ type Monitor interface {
 
 func NewMonitor(monitorType MonitorType, properties map[string]string) Monitor {
 	switch monitorType {
-	case "ping":
+	case Ping:
 		host := utils.GetFirstRequired(properties, "H", "host")
 		return &PingMonitor{Host: host}
-	case "rest":
+	case REST:
 		url := utils.GetFirstRequired(properties, "u", "url")
 		return &RestMonitor{URL: url}
-	case "ssh":
+	case SSH:
 		host := utils.GetFirstRequired(properties, "H", "host")
 		port := utils.GetFirstDefault(properties, "22", "p", "port")
 		user := utils.GetFirstRequired(properties, "u", "user")
@@ -40,7 +40,7 @@ func NewMonitor(monitorType MonitorType, properties map[string]string) Monitor {
 				return true
 			},
 		}
-	case "port":
+	case Port:
 		host := utils.GetFirstRequired(properties, "H", "host")
 		port := utils.GetFirstRequired(properties, "p", "port")
 		return &PortMonitor{
@@ -53,3 +53,13 @@ func NewMonitor(monitorType MonitorType, properties map[string]string) Monitor {
 	}
 	return nil
 }
+
+//func NewMonitors(confs []common.MonitorConfig) []Monitor {
+//	monitors := make([]Monitor, len(confs))
+//
+//	for _, mf := range confs {
+//		m := NewMonitor(mf.Type, mf.Properties)
+//		monitors = append(monitors, m)
+//	}
+//	return monitors
+//}
