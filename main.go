@@ -2,6 +2,7 @@ package main
 
 import (
 	"gonitor/common"
+	"gonitor/monitors"
 	"gonitor/tui"
 )
 
@@ -17,13 +18,13 @@ func main() {
 	//conf := common.LoadConfig(configFile)
 	//fmt.Printf("Conf: %v\n", conf)
 
-	/*mons := []monitors.Monitor{
+	mons := []monitors.Monitor{
 		monitors.NewMonitor(monitors.REST, map[string]string{"url": "http://www.google.de"}),
 		monitors.NewMonitor(monitors.REST, map[string]string{"url": "http://www.fds.de"}),
 		monitors.NewMonitor(monitors.REST, map[string]string{"url": "http://www.heise.de"}),
 	}
 
-	var wg sync.WaitGroup
+	/*var wg sync.WaitGroup
 	wg.Add(1)
 
 	go func() {
@@ -43,5 +44,5 @@ func main() {
 	}()
 
 	wg.Wait()*/
-	tui.Start()
+	tui.Start(mons)
 }

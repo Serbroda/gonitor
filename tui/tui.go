@@ -3,13 +3,19 @@ package tui
 import (
 	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
+	"gonitor/monitors"
 	"os"
 	"time"
 )
 
 type Notes struct {
-	current []string
-	sub     chan []string
+	current []MonHandler
+	sub     chan []MonHandler
+}
+
+type MonHandler struct {
+	monitor monitors.Monitor
+	res     []int
 }
 
 func (n Notes) awaitNext() Notes {
@@ -17,20 +23,27 @@ func (n Notes) awaitNext() Notes {
 }
 
 type model struct {
-	currentNotes []string
+	currentNotes []MonHandler
 }
 
 func (m model) Init() tea.Cmd {
-	channelOut := make(chan []string)
+	channelOut := make(chan []MonHandler)
 
 	go func() {
-		strs := make([]string, 10)
 		for {
-			time.Sleep(time.Second * 2)
-			for i := 0; i < 10; i++ {
-				strs[i] = fmt.Sprintf("Hi from %d", i)
+			time.Sleep(time.Second * 5)
+			for _, m := range m.currentNotes {
+				ok, _ := m.monitor.Monitor()
+				for i := len(m.res) - 1; i > 0; i-- {
+					m.res[i] = m.res[i-1]
+				}
+				if ok {
+					m.res[0] = 1
+				} else {
+					m.res[0] = 0
+				}
 			}
-			channelOut <- strs
+			channelOut <- m.currentNotes
 		}
 	}()
 
@@ -61,13 +74,36 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	str := ""
 	for _, v := range m.currentNotes {
-		str = str + v + time.Now().UTC().String() + "\n"
+		for _, v2 := range v.res {
+			switch v2 {
+			case 0:
+				str += "▯"
+				break
+			case 1:
+				str += "▮"
+				break
+			default:
+				str += " "
+				break
+			}
+			str += " "
+		}
+		str += "\n"
 	}
 	return str
 }
 
-func Start() {
-	p := tea.NewProgram(model{}, tea.WithAltScreen())
+func Start(monitors []monitors.Monitor) {
+	ms := make([]MonHandler, len(monitors))
+	for i, m := range monitors {
+		ms[i] = MonHandler{
+			monitor: m,
+			res:     []int{-1, -1, -1, -1, -1},
+		}
+	}
+	p := tea.NewProgram(model{
+		currentNotes: ms,
+	}, tea.WithAltScreen())
 	if err := p.Start(); err != nil {
 		fmt.Println("Error starting app")
 		os.Exit(2)
