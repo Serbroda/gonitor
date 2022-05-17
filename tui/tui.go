@@ -3,62 +3,40 @@ package tui
 import (
 	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	"gonitor/common"
-	"gonitor/monitors"
-	"math/rand"
 	"os"
-	"strings"
 	"time"
 )
 
-var (
-	docStyle = lipgloss.NewStyle().Padding(1, 2, 1, 2)
-	line     = lipgloss.NewStyle().Background(lipgloss.AdaptiveColor{Light: "#58D384", Dark: "#58D384"})
-)
+type Notes struct {
+	current []string
+	sub     chan []string
+}
 
-type res struct {
-	mon     monitors.Monitor
-	name    string
-	monType string
-	ok      bool
+func (n Notes) awaitNext() Notes {
+	return Notes{current: <-n.sub, sub: n.sub}
 }
 
 type model struct {
-	sub   chan any
-	items []res
-}
-
-func listen(items []res, sub chan any) tea.Cmd {
-	return func() tea.Msg {
-		for {
-			time.Sleep(time.Millisecond * time.Duration(rand.Int63n(900)+100))
-
-			sub <- struct{}{}
-		}
-	}
-}
-
-func initialModel(conf common.Config) model {
-	ress := make([]res, len(conf.Monitors))
-	for i, v := range conf.Monitors {
-		m := monitors.NewMonitor(v.Type, v.Properties)
-
-		ress[i] = res{
-			mon:     m,
-			name:    v.Name,
-			monType: string(v.Type),
-			ok:      false,
-		}
-	}
-	return model{
-		sub:   make(chan any),
-		items: ress,
-	}
+	currentNotes []string
 }
 
 func (m model) Init() tea.Cmd {
-	return tea.Batch()
+	channelOut := make(chan []string)
+
+	go func() {
+		strs := make([]string, 10)
+		for {
+			time.Sleep(time.Second * 2)
+			for i := 0; i < 10; i++ {
+				strs[i] = fmt.Sprintf("Hi from %d", i)
+			}
+			channelOut <- strs
+		}
+	}()
+
+	return func() tea.Msg {
+		return Notes{<-channelOut, channelOut}
+	}
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -69,21 +47,27 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		}
+
+	case Notes:
+		m.currentNotes = msg.current
+		return m, func() tea.Msg {
+			return msg.awaitNext()
+		}
 	}
+
 	return m, nil
 }
 
 func (m model) View() string {
-	doc := strings.Builder{}
-
-	for _, v := range m.items {
-		doc.WriteString(line.Render(fmt.Sprintf("%s: %v", v.name, v.ok)) + "\n")
+	str := ""
+	for _, v := range m.currentNotes {
+		str = str + v + time.Now().UTC().String() + "\n"
 	}
-	return docStyle.Render(doc.String())
+	return str
 }
 
-func Start(conf common.Config) {
-	p := tea.NewProgram(initialModel(conf), tea.WithAltScreen())
+func Start() {
+	p := tea.NewProgram(model{}, tea.WithAltScreen())
 	if err := p.Start(); err != nil {
 		fmt.Println("Error starting app")
 		os.Exit(2)

@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"gonitor/common"
-	"gonitor/monitors"
-	"time"
+	"gonitor/tui"
 )
 
 func main() {
@@ -19,19 +17,31 @@ func main() {
 	//conf := common.LoadConfig(configFile)
 	//fmt.Printf("Conf: %v\n", conf)
 
-	mons := []monitors.Monitor{
+	/*mons := []monitors.Monitor{
 		monitors.NewMonitor(monitors.REST, map[string]string{"url": "http://www.google.de"}),
 		monitors.NewMonitor(monitors.REST, map[string]string{"url": "http://www.fds.de"}),
 		monitors.NewMonitor(monitors.REST, map[string]string{"url": "http://www.heise.de"}),
 	}
 
-	for {
-		for _, m := range mons {
-			ok, _ := m.Monitor()
-			fmt.Printf("Res: %v\n", ok)
-			time.Sleep(2 * time.Second)
-		}
-	}
+	var wg sync.WaitGroup
+	wg.Add(1)
 
-	//tui.Start(conf)
+	go func() {
+		i := 0
+		for {
+			for _, m := range mons {
+				ok, _ := m.Monitor()
+				fmt.Printf("Res: %v\n", ok)
+			}
+			time.Sleep(2 * time.Second)
+			i++
+			if i > 10 {
+				wg.Done()
+				break
+			}
+		}
+	}()
+
+	wg.Wait()*/
+	tui.Start()
 }
