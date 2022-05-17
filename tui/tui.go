@@ -33,7 +33,7 @@ func (m model) Init() tea.Cmd {
 		for {
 			time.Sleep(time.Second * 5)
 			for _, m := range m.currentNotes {
-				ok, _ := m.monitor.Monitor()
+				ok, _ := m.monitor.Handler.Check()
 				for i := len(m.res) - 1; i > 0; i-- {
 					m.res[i] = m.res[i-1]
 				}
@@ -74,6 +74,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	str := ""
 	for _, v := range m.currentNotes {
+		str += v.monitor.Name + " "
 		for _, v2 := range v.res {
 			switch v2 {
 			case 0:
@@ -83,7 +84,7 @@ func (m model) View() string {
 				str += "▮"
 				break
 			default:
-				str += " "
+				str += ""
 				break
 			}
 			str += " "

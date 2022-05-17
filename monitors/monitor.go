@@ -13,11 +13,23 @@ const (
 	Port             = "port"
 )
 
-type Monitor interface {
-	Monitor() (bool, any)
+type Monitor struct {
+	Name    string
+	Handler MonitorHandler
 }
 
-func NewMonitor(monitorType MonitorType, properties map[string]string) Monitor {
+type MonitorHandler interface {
+	Check() (bool, any)
+}
+
+func NewMonitor(name string, monitorType MonitorType, properties map[string]string) Monitor {
+	return Monitor{
+		Name:    name,
+		Handler: NewHandler(monitorType, properties),
+	}
+}
+
+func NewHandler(monitorType MonitorType, properties map[string]string) MonitorHandler {
 	switch monitorType {
 	case Ping:
 		host := utils.GetFirstRequired(properties, "H", "host")
@@ -54,11 +66,11 @@ func NewMonitor(monitorType MonitorType, properties map[string]string) Monitor {
 	return nil
 }
 
-//func NewMonitors(confs []common.MonitorConfig) []Monitor {
-//	monitors := make([]Monitor, len(confs))
+//func NewMonitors(confs []common.MonitorConfig) []MonitorHandler {
+//	monitors := make([]MonitorHandler, len(confs))
 //
 //	for _, mf := range confs {
-//		m := NewMonitor(mf.Type, mf.Properties)
+//		m := NewHandler(mf.Type, mf.Properties)
 //		monitors = append(monitors, m)
 //	}
 //	return monitors

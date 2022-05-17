@@ -15,9 +15,9 @@ func Cli(args Arguments) {
 	}
 	res := false
 
-	m := monitors.NewMonitor(monitors.MonitorType(mode), args.keyValues)
+	m := monitors.NewHandler(monitors.MonitorType(mode), args.keyValues)
 	for {
-		ok, _ := m.Monitor()
+		ok, _ := m.Check()
 		res = ok
 		fmt.Printf("%v\n", res)
 		if !repeat {

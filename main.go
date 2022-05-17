@@ -19,9 +19,9 @@ func main() {
 	//fmt.Printf("Conf: %v\n", conf)
 
 	mons := []monitors.Monitor{
-		monitors.NewMonitor(monitors.REST, map[string]string{"url": "http://www.google.de"}),
-		monitors.NewMonitor(monitors.REST, map[string]string{"url": "http://www.fds.de"}),
-		monitors.NewMonitor(monitors.REST, map[string]string{"url": "http://www.heise.de"}),
+		monitors.NewMonitor("google", monitors.REST, map[string]string{"url": "http://www.google.de"}),
+		monitors.NewMonitor("fds", monitors.REST, map[string]string{"url": "http://www.fds.de"}),
+		monitors.NewMonitor("heise", monitors.REST, map[string]string{"url": "http://www.heise.de"}),
 	}
 
 	/*var wg sync.WaitGroup
@@ -31,7 +31,7 @@ func main() {
 		i := 0
 		for {
 			for _, m := range mons {
-				ok, _ := m.Monitor()
+				ok, _ := m.MonitorHandler()
 				fmt.Printf("Res: %v\n", ok)
 			}
 			time.Sleep(2 * time.Second)

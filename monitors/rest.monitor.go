@@ -15,7 +15,7 @@ type RestResponse struct {
 	Body       string
 }
 
-func (m *RestMonitor) Monitor() (bool, any) {
+func (m *RestMonitor) Check() (bool, any) {
 	response, err := http.Get(m.URL)
 	if err != nil {
 		return false, RestResponse{}

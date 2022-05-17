@@ -9,7 +9,7 @@ type PingMonitor struct {
 	Host string
 }
 
-func (m *PingMonitor) Monitor() (bool, any) {
+func (m *PingMonitor) Check() (bool, any) {
 	pinger, err := ping.NewPinger(m.Host)
 	pinger.SetPrivileged(true)
 	pinger.Count = 1
